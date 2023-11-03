@@ -1,0 +1,247 @@
+---
+title: "HW 7 Clustering & Dimensionality Reduction"
+author: "Gayoung Lee"
+date: "2023-10-29"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+## Input dataset
+
+```{r}
+setwd("~/Desktop/BIOS611")
+getwd()
+
+library(readr)
+kc <- read_csv("source_data/kc_house_data.csv") 
+kc
+```
+
+## Package install
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(matlab)
+library(ggplot2)
+```
+
+## dataset with continuous variables
+
+```{r}
+kc_con <- kc %>% 
+  select(., -id, -date)
+
+write.csv(kc_con, file = "kc_con.csv", row.names = FALSE)
+```
+
+# 1. Principal Component Analysis (PCA)
+
+Load the data into R.
+Perform PCA on the dataset.
+Plot the variance explained by each principal component as a function of the number of components.
+Interpret the plot and explain its implications.
+
+```{r}
+library(FactoMineR)
+
+pca_result <- prcomp(kc_con, scale = TRUE)
+pca_result2 <- PCA(kc_con, graph=TRUE)
+summary(pca_result)
+```
+
+### Plot the variance
+
+```{r}
+variance_explained_percent <- (pca_result$sdev^2) / sum(pca_result$sdev^2) * 100
+cumulative_variance_percent <- cumsum(variance_explained_percent)
+
+cum_var <- data.frame(
+  PC = 1:19,  # PC1, PC2, ..., PC19
+  CumulativeVarianceExplainedPercent = cumulative_variance_percent
+)
+
+ggplot(cum_var, aes(x = PC, y = CumulativeVarianceExplainedPercent)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Principal Component (PC)", y = "Cumulative Variance Explained (%)") +
+  ggtitle("Cumulative Variance Explained by Principal Components")
+
+```
+
+# interpretation:
+
+PC1 explains 29.9% of total variance.
+To preserve 90% of the total variance of the dataset, we need 12 numbers of PC (PC1, PC2, ... , PC12).
+
+### Interpretation
+
+To preserve 90% of the total variance, we need 12 PCs.
+Considering PCA graph of variables, we can review a positive/negative association of each variable and PC.
+
+```{r}
+pca_components <- pca_result$x
+
+pca_components2 <- data.frame(
+  pca_components[, 1:19]  # PC1 to PC19
+)
+```
+
+# 2. Cluster Analysis in PCA Space
+
+Create a scatter plot of the first principal component (PC1) versus the second principal component (PC2).
+
+```{r}
+pc1_values<- pca_result$x[, 1]  # PC1
+pc2_values<- pca_result$x[, 2]  # PC2
+
+pc_data <- data.frame(
+  pc1 = pc1_values,
+  pc2 = pc2_values
+)
+  
+pc_data %>%
+  ggplot(aes(x=pc1,y=pc2)) + geom_point() +
+  labs(
+    x = "PC1",
+    y = "PC2",
+    title = "PC Scatter Plot"
+  )
+
+```
+
+Manually identify regions in the plot where points appear to cluster.
+
+-   There is a cluster where the most of the data are in.
+
+### Corresponding index in the original dataset.
+
+: Choose the two most densely populated regions in the 2D PCA projection.
+
+```{r}
+library(gridExtra)
+```
+
+```{r}
+combined_data = cbind(kc_con, pc_data)
+
+library(RColorBrewer)
+
+p1 <- combined_data %>%
+  ggplot(aes(x=pc1,y=pc2,color=factor(grade))) + geom_point() +
+  scale_fill_brewer(palette = "Blues", type = "seq") +
+  labs(
+    x = "PC1",
+    y = "PC2",
+    title = "PC Scatter Plot with grade of house"
+  ) + theme(legend.position = "right") +
+  guides(color = guide_legend(keywidth = 2, keyheight = 1))
+
+price_factor <- cut(combined_data$price/10000, breaks = 10)
+
+p2 <- combined_data %>%
+  ggplot(aes(x=pc1,y=pc2,color=factor(price_factor))) + geom_point() +
+  scale_fill_brewer(palette = "Blues", type = "seq") +
+  labs(
+    x = "PC1",
+    y = "PC2",
+    title = "PC Scatter Plot with price (Unit: $10,000)"
+  ) + theme(legend.position = "right") 
+
+p1
+p2
+
+```
+
+### Interpretation
+
+The grade of houses is sensitive to PC1, while it is less sensitive to PC2 according to the graph 1 (PC scatter plot 1).
+
+The price of houses is sensitive to both PC1 and PC2.
+
+# 3. t-SNE Projection
+
+```{r}
+kc_con$price <- as.numeric(kc_con$price)
+kc_con <- na.omit(kc_con) # exclude observations with missing values
+write.csv(kc_con, file = "kc_con.csv", row.names = TRUE)
+print(kc_con)
+```
+
+### Run python3 tsne_script.py on terminal
+
+```{r}
+kc_tsne <- read_csv("derived_data/tsne-projection.csv") 
+kc_tsne
+```
+
+### t-SNE Plot
+
+```{r}
+tsne_df <- as.data.frame(kc_tsne)
+
+ggplot(data = tsne_df, aes(x = TSNE1, y = TSNE2)) +
+  geom_point() +
+  labs(title = "t-SNE Plot")
+```
+
+### Interpretation of t-SNE projection
+
+-   According to the t-SNE projection graph, there is no specific cluster that we can observe.
+
+# 4. Cluster Analysis and Mutual Information
+
+Perform k-means clustering on the t-SNE projections, looking for 5 clusters.
+
+### K-means clustering on the t-SNE projections looking for 5 clusters.
+
+```{r}
+tsne_5clus = kmeans(tsne_df, centers=5) [1]
+pca_5clus = kmeans(pc_data, centers=5) [1]
+```
+
+```{r}
+# t-SNE 
+p11 <- cbind(tsne_df,tsne_5clus) %>%
+  ggplot(aes(x=TSNE1,y=TSNE2,color=cluster)) +
+  geom_point() +
+  labs(
+    x="TSNE1",
+    y="TSNE2",
+    title="TSNE Scatter Plot with Kmeans Clustering: 5 Clusters"
+  ) + theme(legend.position = "right")
+
+# PCA
+p12 <- cbind(pc_data,pca_5clus) %>%
+  ggplot(aes(x=pc1,y=pc2,color=cluster)) +
+  geom_point() +
+  labs(
+    x="PC1",
+    y="PC2",
+    title="PC Scatter Plot with Kmeans Clustering: 5 Clusters"
+  ) + theme(legend.position = "right")
+
+p11
+p12
+```
+
+### Calculate the Normalized Mutual Information (NMI) between these two sets of clusters.
+
+Note: You can refer to class notes for calculating NMI or use the aricode library's NMI function.
+
+```{r}
+install.packages("aricode")
+library(aricode)
+```
+
+```{r}
+NMI(tsne_5clus[[1]],pca_5clus[[1]])
+```
+
+### Interpretation of the NMI score
+
+We got NMI score of 0.1319.
+This score measures the similarity or mutual information between two different clustering results.
+
+Since 0.1 \<= NMI \< 0.2, we can interpret that there is a significant difference between the first cluster of the t-SNE projection and the first cluster of the PCA cluster, with some association.
