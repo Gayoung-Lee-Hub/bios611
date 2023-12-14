@@ -42,7 +42,7 @@ knitr::include_graphics("./figure/FinalProject_PriceRange.png")
 To visually assess whether the year built has a significant impact on price ranges, I employed a ridgeline plot. We can observe a slight increase in price ranges based on the year of construction, but overall, there is not a significant change.
 
 ```{r console}
-knitr::include_graphics("./figure/FinalProject4.png")
+knitr::include_graphics("./figure/FinalProject_Ridge.png")
 ```
 
 Hence, I observed that the presence of renovations has a more pronounced impact on prices than the year built.
@@ -52,10 +52,10 @@ Hence, I observed that the presence of renovations has a more pronounced impact 
 Additionally, the graph below indicates that larger living room sizes correlate with higher selling prices. This finding aligns with common expectations, where larger living spaces tend to command higher prices.
 
 ```{r console}
-knitr::include_graphics("./figure/FinalProject3.png")
+knitr::include_graphics("./figure/FinalProject_PriceYear.png")
 ```
 
-The three graphs below depict the correlation between price and the area of the living room, above ground space, and basement. As evident from these graphs, there is a positive correlation between the area of these spaces and the price, as confirmed by the regression lines. The final graph illustrates the correlation between price and the year built, where the nearly horizontal regression line indicates a lack of significant correlation. This aligns with the findings we observed earlier.
+The three graphs below depict the correlation between price and the area of the living room, above ground space, and basement. As evident from these graphs, there is a positive correlation between the area of these spaces and the price, as confirmed by the regression lines. It can be observed that a considerable number of houses, despite being sold at high prices, do not have a basement. The final graph illustrates the correlation between price and the year built, where the nearly horizontal regression line indicates a lack of significant correlation. This aligns with the findings we observed earlier.
 
 Houses with the price of \$2,000,000 were excluded in our analysis.
 
@@ -67,8 +67,28 @@ knitr::include_graphics("./figure/FinalProject_Scatter.png")
 
 Now that we know that area has a positive correlation with price. I have also assessed how other categorical factors influence prices.
 
-Contrary to my expectations, the number of bedrooms did not have a significant impact on the price. Instead, there was a noticeable increase in price with an increasing number of bathrooms. If we aim to predict prices, the number of bathrooms could potentially serve as a valuable predictor.
+Contrary to my expectations, the number of bedrooms did not have a significant impact on the price. Instead, there was a noticeable increase in price with an increasing number of bathrooms. Furthermore, I examined how the grade (overall grade given to the housing unit based on the King County grading system) and condition (overall condition of the house) impact the house's price. Ultimately, it was observed that, rather than condition, the grade has a more significant influence on the selling price of the house.
+
+If we aim to predict prices in King County, WA, the number of bathrooms and the grade could potentially serve as valuable predictors.
 
 ```{r console}
 knitr::include_graphics("./figure/FinalProject_Box.png")
 ```
+
+Initially, I assumed that as all factors in this dataset improved, the price would increase, making the results less intriguing. However, unexpectedly, it became evident that there are many factors that do not have a significant impact on the price.
+
+### Price and Geographical Location
+
+Lastly, as seen in the graph below, the housing sales in King County are more prevalent in the Seattle compared to the mountainous regions (eastern region of King County). Particularly, the Redmond area near the lakes stands out as the most expensive. For convenience, I have attached a Google Map image of King County.
+
+```{r console}
+knitr::include_graphics("./figure/FinalProject_Map.png")
+```
+
+### Conclusion
+
+Through the analysis of housing sales data in King County spanning from May 2014 to May 2015, we investigated factors influencing house prices over the course of one year. As a result, we found that factors such as whether the property was renovated, the area size, the number of bathrooms, and the house's grade were more significant determinants of house prices compared to the year of construction, the number of bedrooms, and the overall condition. Furthermore, we observed that the geographic location plays a crucial role, with properties near lakes and in the Redmond area, where numerous high-tech companies are located, showing higher property values.
+
+### Future Analysis
+
+Analyzing the latitude and longitude data in our dataset along with information from Google Maps to identify amenities, schools, and other facilities in the areas where high-value transactions occurred from 2014 to 2015 could enhance our ability to predict house prices more accurately.
