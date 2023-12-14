@@ -35,13 +35,13 @@ The price categories are divided into three groups: 'Cheap' for prices at or bel
 
 The following two graphs illustrate how the price ranges are distributed based on the year built and year renovated. As evident from the second graph, most of the expensive homes have undergone renovations, and it's notable that not all recently built homes are necessarily expensive.
 
-```{r console}
+```{r}
 knitr::include_graphics("./figure/FinalProject_PriceRange.png")
 ```
 
 To visually assess whether the year built has a significant impact on price ranges, I employed a ridgeline plot. We can observe a slight increase in price ranges based on the year of construction, but overall, there is not a significant change.
 
-```{r console}
+```{r}
 knitr::include_graphics("./figure/FinalProject_Ridge.png")
 ```
 
@@ -51,7 +51,7 @@ Hence, I observed that the presence of renovations has a more pronounced impact 
 
 Additionally, the graph below indicates that larger living room sizes correlate with higher selling prices. This finding aligns with common expectations, where larger living spaces tend to command higher prices.
 
-```{r console}
+```{r}
 knitr::include_graphics("./figure/FinalProject_PriceYear.png")
 ```
 
@@ -59,7 +59,7 @@ The three graphs below depict the correlation between price and the area of the 
 
 Houses with the price of \$2,000,000 were excluded in our analysis.
 
-```{r console}
+```{r}
 knitr::include_graphics("./figure/FinalProject_Scatter.png")
 ```
 
@@ -71,7 +71,7 @@ Contrary to my expectations, the number of bedrooms did not have a significant i
 
 If we aim to predict prices in King County, WA, the number of bathrooms and the grade could potentially serve as valuable predictors.
 
-```{r console}
+```{r}
 knitr::include_graphics("./figure/FinalProject_Box.png")
 ```
 
@@ -81,7 +81,7 @@ Initially, I assumed that as all factors in this dataset improved, the price wou
 
 Lastly, as seen in the graph below, the housing sales in King County are more prevalent in the Seattle compared to the mountainous regions (eastern region of King County). Particularly, the Redmond area near the lakes stands out as the most expensive. For convenience, I have attached a Google Map image of King County.
 
-```{r console}
+```{r}
 knitr::include_graphics("./figure/FinalProject_Map.png")
 ```
 
