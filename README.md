@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # BIOS 611 Final Project
 
 ## King County Housing Sales Data Analysis: What factors influence house prices?
