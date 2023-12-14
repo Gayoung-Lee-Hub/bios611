@@ -42,6 +42,7 @@ make report.html
 The report will be automatically made.
 
 If you want to clean the output, run the code below:
-```{}
+
+```         
 make clean
 ```
